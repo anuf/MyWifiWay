@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">MyWifiWay</string>
+    <string name="title_network_detail">Network Detail</string>
+</resources>

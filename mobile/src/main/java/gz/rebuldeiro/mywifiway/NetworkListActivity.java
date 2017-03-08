@@ -1,7 +1,10 @@
 package gz.rebuldeiro.mywifiway;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -13,10 +16,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.net.wifi.ScanResult;
+import android.widget.Toast;
 
-
-import gz.rebuldeiro.mywifiway.dummy.DummyContent;
-
+import gz.rebuldeiro.mywifiway.network.NetworkContent;
 import java.util.List;
 
 /**
@@ -35,6 +38,8 @@ public class NetworkListActivity extends AppCompatActivity {
      */
     private boolean mTwoPane;
 
+    private List<ScanResult> results;
+    private WifiManager wifi;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,18 +69,42 @@ public class NetworkListActivity extends AppCompatActivity {
             // activity should be in two-pane mode.
             mTwoPane = true;
         }
+
+        wifi = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
+        //wifi = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+        if (wifi.isWifiEnabled() == false)
+        {
+            Toast.makeText(getApplicationContext(), "wifi is disabled..making it enabled", Toast.LENGTH_LONG).show();
+            wifi.setWifiEnabled(true);
+        } else {
+            wifi.startScan();
+            Toast.makeText(getApplicationContext(), wifi.getScanResults().toString(), Toast.LENGTH_LONG).show();
+
+        }
+        registerReceiver(new BroadcastReceiver()
+        {
+            @Override
+            public void onReceive(Context c, Intent intent)
+            {
+                results = wifi.getScanResults();
+                Toast.makeText(getApplicationContext(), results.toString(), Toast.LENGTH_LONG).show();
+
+                //size = results.size();
+            }
+        }, new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
+
     }
 
     private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
-        recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(DummyContent.ITEMS));
+        recyclerView.setAdapter(new SimpleItemRecyclerViewAdapter(NetworkContent.ITEMS));
     }
 
     public class SimpleItemRecyclerViewAdapter
             extends RecyclerView.Adapter<SimpleItemRecyclerViewAdapter.ViewHolder> {
 
-        private final List<DummyContent.DummyItem> mValues;
+        private final List<NetworkContent.NetworkItem> mValues;
 
-        public SimpleItemRecyclerViewAdapter(List<DummyContent.DummyItem> items) {
+        public SimpleItemRecyclerViewAdapter(List<NetworkContent.NetworkItem> items) {
             mValues = items;
         }
 
@@ -123,7 +152,7 @@ public class NetworkListActivity extends AppCompatActivity {
             public final View mView;
             public final TextView mIdView;
             public final TextView mContentView;
-            public DummyContent.DummyItem mItem;
+            public NetworkContent.NetworkItem mItem;
 
             public ViewHolder(View view) {
                 super(view);

@@ -9,7 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import gz.rebuldeiro.mywifiway.dummy.DummyContent;
+import gz.rebuldeiro.mywifiway.network.NetworkContent;
 
 /**
  * A fragment representing a single Network detail screen.
@@ -25,9 +25,9 @@ public class NetworkDetailFragment extends Fragment {
     public static final String ARG_ITEM_ID = "item_id";
 
     /**
-     * The dummy content this fragment is presenting.
+     * The network content this fragment is presenting.
      */
-    private DummyContent.DummyItem mItem;
+    private NetworkContent.NetworkItem mItem;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -41,10 +41,10 @@ public class NetworkDetailFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         if (getArguments().containsKey(ARG_ITEM_ID)) {
-            // Load the dummy content specified by the fragment
+            // Load the network content specified by the fragment
             // arguments. In a real-world scenario, use a Loader
             // to load content from a content provider.
-            mItem = DummyContent.ITEM_MAP.get(getArguments().getString(ARG_ITEM_ID));
+            mItem = NetworkContent.ITEM_MAP.get(getArguments().getString(ARG_ITEM_ID));
 
             Activity activity = this.getActivity();
             CollapsingToolbarLayout appBarLayout = (CollapsingToolbarLayout) activity.findViewById(R.id.toolbar_layout);
@@ -59,7 +59,7 @@ public class NetworkDetailFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.network_detail, container, false);
 
-        // Show the dummy content as text in a TextView.
+        // Show the network content as text in a TextView.
         if (mItem != null) {
             ((TextView) rootView.findViewById(R.id.network_detail)).setText(mItem.details);
         }
